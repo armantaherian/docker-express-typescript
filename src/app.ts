@@ -5,7 +5,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import engine from 'ejs-locals';
 import cookieParser from 'cookie-parser';
 import statusMonitor from 'express-status-monitor';
-import { ApplicationError } from './errors';
+import ApplicationError from './errors/application-error';
 import routes from './routes';
 
 const app = express();
