@@ -1,0 +1,25 @@
+<!-- views/pages/upload/list.ejs -->
+
+<% layout('../../layout') -%>
+
+<main>
+  <div class="jumbotron">
+    <h1>The files list</h1>
+    <p>You can get them all...</p>
+  </div>
+
+  <div>
+    <ul class="list-group">
+      <% filesList.forEach(function(file) { %>
+      <a href="download/<%= file.name %>"
+        class="list-group-item d-flex justify-content-between align-items-center">
+        <%= file.name %>
+        <span class="badge badge-primary badge-pill"><%= file.size %></span>
+      </a>
+      <% }); %>
+    </ul>
+  </div>
+</main>
+
+<script>
+</script>

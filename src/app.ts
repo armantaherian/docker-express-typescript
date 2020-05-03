@@ -2,14 +2,25 @@ import bodyParser from 'body-parser';
 import compression from 'compression';
 import path from 'path';
 import express, { Request, Response, NextFunction } from 'express';
+import engine from 'ejs-locals';
+import cookieParser from 'cookie-parser';
+import statusMonitor from 'express-status-monitor';
 import { ApplicationError } from './errors';
 import routes from './routes';
 
 const app = express();
 
+app.engine('ejs', engine);
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
+
 app.use(compression());
-app.use(bodyParser.json());
+app.use(bodyParser.json({
+  limit: '50mb',
+}));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(statusMonitor());
 
 app.set('port', process.env.PORT || 3000);
 
