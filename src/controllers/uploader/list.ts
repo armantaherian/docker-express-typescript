@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express';
 import { Stats } from 'fs';
+import requestMiddleware from '../../middleware/request-middleware';
 import FileHandler from '../../utils/fileHandler';
-import handleErrorMiddleware from '../../middleware/handle-error-middleware';
 
 const list: RequestHandler = async (_req, res) => {
   const filesList = await FileHandler.getFiles();
@@ -24,4 +24,4 @@ const list: RequestHandler = async (_req, res) => {
   });
 };
 
-export default handleErrorMiddleware(list);
+export default requestMiddleware(list);

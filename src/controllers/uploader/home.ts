@@ -1,8 +1,8 @@
 import { RequestHandler } from 'express';
-import handleErrorMiddleware from '../../middleware/handle-error-middleware';
+import requestMiddleware from '../../middleware/request-middleware';
 
 const home: RequestHandler = async (_req, res) => {
   res.render('pages/upload/index');
 };
 
-export default handleErrorMiddleware(home);
+export default requestMiddleware(home);

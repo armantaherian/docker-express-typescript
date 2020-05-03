@@ -1,6 +1,6 @@
 import fs, { Stats } from 'fs';
 import path from 'path';
-import filesize from '../utils/file-size';
+import filesize from './file-size';
 
 const UploadFolderPath: string = path.join(__dirname, '../../uploaded');
 
