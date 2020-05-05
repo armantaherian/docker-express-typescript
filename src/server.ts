@@ -6,11 +6,16 @@ if (result.error) {
   dotenv.config({ path: '.env.default' });
 }
 
+import 'reflect-metadata';
 import app from './app';
 import MongoConnection from './mongo-connection';
 import logger from './logger';
 
-const mongoConnection = new MongoConnection(process.env.MONGO_URL);
+const mongoConnection = new MongoConnection(
+  process.env.MONGO_URL,
+  process.env.MONGO_DC,
+  process.env.MONGO_PORT,
+);
 
 if (process.env.MONGO_URL == null) {
   logger.log({

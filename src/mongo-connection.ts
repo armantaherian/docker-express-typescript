@@ -1,5 +1,7 @@
 import mongoose, { ConnectionOptions } from 'mongoose';
 import logger from './logger';
+import { File } from './models/entity/Files';
+import { createConnection } from 'typeorm';
 
 (<any>mongoose).Promise = global.Promise;
 
@@ -19,6 +21,8 @@ interface IOnConnectedCallback {
 export default class MongoConnection {
   /** URL to access mongo */
   private readonly mongoUrl: string;
+  private readonly mongoPort: string;
+  private readonly mongoDc: string;
 
   /** Callback when mongo connection is established or re-established */
   private onConnectedCallback: IOnConnectedCallback;
@@ -41,16 +45,22 @@ export default class MongoConnection {
    * @param mongoUrl MongoDB URL
    * @param onConnectedCallback callback to be called when mongo connection is successful
    */
-  constructor(mongoUrl: string) {
+  constructor(mongoUrl: string, mongoDc: string, mongoPort: string) {
     if (process.env.NODE_ENV === 'development') {
       mongoose.set('debug', true);
     }
 
     this.mongoUrl = mongoUrl;
+    this.mongoPort = mongoPort;
+    this.mongoDc = mongoDc;
     mongoose.connection.on('error', this.onError);
     mongoose.connection.on('disconnected', this.onDisconnected);
     mongoose.connection.on('connected', this.onConnected);
     mongoose.connection.on('reconnected', this.onReconnected);
+  }
+
+  private getMongoUrl() {
+    return `mongodb://${this.mongoUrl}:${this.mongoPort}/${this.mongoDc}`
   }
 
   /** Close mongo connection */
@@ -72,9 +82,24 @@ export default class MongoConnection {
   private startConnection = () => {
     logger.log({
       level: 'info',
-      message: `Connecting to MongoDB at ${this.mongoUrl}`
+      message: `Connecting to MongoDB at ${this.getMongoUrl()}`
     });
-    mongoose.connect(this.mongoUrl, this.mongoConnectionOptions).catch(() => { });
+
+    createConnection({
+      type: "mongodb",
+      host: this.mongoUrl,
+      port: Number(this.mongoPort),
+      database: this.mongoDc,
+      // username: "root",
+      // password: "admin",
+      entities: [
+        __dirname + "/models/entity/*.ts"
+      ],
+      synchronize: true,
+      logging: true,
+    }).then((_connection: any) => {
+      mongoose.connect(this.getMongoUrl(), this.mongoConnectionOptions).catch(() => { });
+    }).catch((error: any) => console.log(error));
   }
 
   /**
@@ -83,7 +108,7 @@ export default class MongoConnection {
   private onConnected = () => {
     logger.log({
       level: 'info',
-      message: `Connected to MongoDB at ${this.mongoUrl}`
+      message: `Connected to MongoDB at ${this.getMongoUrl()}`
     });
     this.isConnectedBefore = true;
     this.onConnectedCallback();
@@ -102,7 +127,7 @@ export default class MongoConnection {
   private onError = () => {
     logger.log({
       level: 'error',
-      message: `Could not connect to ${this.mongoUrl}`
+      message: `Could not connect to ${this.getMongoUrl()}`
     });
   };
 

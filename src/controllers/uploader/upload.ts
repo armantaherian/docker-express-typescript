@@ -2,6 +2,8 @@ import { RequestHandler } from 'express';
 import Joi from '@hapi/joi';
 import requestMiddleware from '../../middleware/request-middleware';
 import FileHandler from '../../utils/fileHandler';
+import { getManager, DeepPartial, FindConditions } from 'typeorm';
+import { File } from '../../models/entity/Files';
 
 export const addFileSchema = Joi.object().keys({
   lastModified: Joi.number().required(),
@@ -26,11 +28,18 @@ const upload: RequestHandler = async (req, res) => {
   //   body.base64,
   // )
 
+  const file = { ...req.body };
+  delete file.base64;
+
+  const fileRepository = getManager().getRepository(File);
+  const newFile = fileRepository.create(file);
+  const savedFile: any = await fileRepository.save(newFile);
+
   const uploaded = await FileHandler.saveBase64(body);
 
   res.send({
-    name: body.name,
-    size: body.size,
+    id: savedFile.id,
+    ...savedFile,
     done: uploaded ? 'ok!' : 'not ok!',
   });
 };
