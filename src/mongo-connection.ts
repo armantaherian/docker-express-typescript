@@ -1,6 +1,5 @@
 import mongoose, { ConnectionOptions } from 'mongoose';
 import logger from './logger';
-import { File } from './models/entity/Files';
 import { createConnection } from 'typeorm';
 
 (<any>mongoose).Promise = global.Promise;
@@ -85,6 +84,7 @@ export default class MongoConnection {
       message: `Connecting to MongoDB at ${this.getMongoUrl()}`
     });
 
+    // TypeORM Connection
     createConnection({
       type: "mongodb",
       host: this.mongoUrl,
@@ -95,11 +95,38 @@ export default class MongoConnection {
       entities: [
         __dirname + "/models/entity/*.ts"
       ],
+      migrations: [
+        __dirname + "/migrations/*.ts"
+      ],
       synchronize: true,
-      logging: true,
-    }).then((_connection: any) => {
-      mongoose.connect(this.getMongoUrl(), this.mongoConnectionOptions).catch(() => { });
-    }).catch((error: any) => console.log(error));
+      logging: ["query", "error"],
+      cli: {
+        migrationsDir: "migrations",
+      },
+      useUnifiedTopology: true,
+    }).then(() => {
+      logger.log({
+        level: 'info',
+        message: "Connected to MongoDB by TypeORM",
+      })
+    }).catch((error: any) => {
+      logger.log({
+        level: 'error',
+        message: error,
+      })
+    });
+
+    // And mongoose connection,
+    // I have to keep both for now.
+    mongoose.connect(
+      this.getMongoUrl(),
+      this.mongoConnectionOptions,
+    ).catch((error: any) => {
+      logger.log({
+        level: 'error',
+        message: error,
+      });
+    });
   }
 
   /**

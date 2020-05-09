@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express';
-import requestMiddleware from '../../middleware/request-middleware';
+import requestMiddleware from '../../middlewares/request-middleware';
 import Book from '../../models/Book';
 
 /**

@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 import { Stats } from 'fs';
-import requestMiddleware from '../../middleware/request-middleware';
+import requestMiddleware from '../../middlewares/request-middleware';
 import FileHandler from '../../utils/fileHandler';
 
 const list: RequestHandler = async (_req, res) => {

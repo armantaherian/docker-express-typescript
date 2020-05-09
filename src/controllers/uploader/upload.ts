@@ -1,9 +1,9 @@
 import { RequestHandler } from 'express';
 import Joi from '@hapi/joi';
-import requestMiddleware from '../../middleware/request-middleware';
+import requestMiddleware from '../../middlewares/request-middleware';
 import FileHandler from '../../utils/fileHandler';
 import { getManager, DeepPartial, FindConditions } from 'typeorm';
-import { File } from '../../models/entity/Files';
+import { File } from '../../models/entity/File';
 
 export const addFileSchema = Joi.object().keys({
   lastModified: Joi.number().required(),

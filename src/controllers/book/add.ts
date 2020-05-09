@@ -1,6 +1,6 @@
 import { RequestHandler } from 'express';
 import Joi from '@hapi/joi';
-import requestMiddleware from '../../middleware/request-middleware';
+import requestMiddleware from '../../middlewares/request-middleware';
 import Book from '../../models/Book';
 
 export const addBookSchema = Joi.object().keys({

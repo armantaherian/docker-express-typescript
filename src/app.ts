@@ -5,6 +5,8 @@ import express, { Request, Response, NextFunction } from 'express';
 import engine from 'ejs-locals';
 import cookieParser from 'cookie-parser';
 import statusMonitor from 'express-status-monitor';
+import helmet from "helmet";
+import cors from "cors";
 import ApplicationError from './errors/application-error';
 import routes from './routes';
 
@@ -15,6 +17,8 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
 app.use(compression());
+app.use(cors());
+app.use(helmet());
 app.use(bodyParser.json({
   limit: '50mb',
 }));
